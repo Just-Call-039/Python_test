@@ -17,7 +17,7 @@ list_files = os.listdir(path)
 
 for i in list_files:
     start_time = time.time()
-    if i.endswith('.xls' or '.xml'):
+    if i.endswith('.xls') or i.endswith('.xml'):
         # Создание путей для файлов.
         full_path = f'{path}\\{i}'
         temp_path = f'{temp}\\{i.rstrip(".xls")}_temp.csv'
