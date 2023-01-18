@@ -18,6 +18,7 @@ list_files = os.listdir(path)
 for i in list_files:
     start_time = time.time()
     if i.endswith('.xls' or '.xml'):
+        # Создание путей для файлов.
         full_path = f'{path}\\{i}'
         temp_path = f'{temp}\\{i.rstrip(".xls")}_temp.csv'
         out_path = f'{out}\\{i.rstrip(".xls")}_out.csv'
@@ -29,19 +30,26 @@ for i in list_files:
         with open(full_path, encoding='utf-8') as f:
             soup = BeautifulSoup(f.read(), 'xml')
 
+        # Открытие промежуточного файла на запись.
         with open(temp_path, 'w', encoding='utf-8') as temp_file:
             for now in soup.find_all('ss:Data'):
                 temp_text = now.get_text()
+                # Если строка подходит под условие, запись в промежуточный файл.
                 if any(True for i in (range(10)) if str(i) in temp_text) and len(temp_text) >= 10 \
                         and temp_text.isdigit() and '.' not in temp_text:
                     temp_file.write(f'{temp_text}\n')
 
+        # Открытие промежуточного файла с помощью pandas.
         df = pd.read_csv(temp_path, header=None)
+        # Выделение только уникальных значений.
         df = df[0].unique()
         df = pd.Series(df)
+        # Запись всех значений в итоговый файл.
         df.to_csv(out_path, sep=';', header=False)
 
-        # os.remove(to_file)
+        # Удаление начального и промежуточного файла.
+        os.remove(full_path)
+        os.remove(temp_path)
 
         end_time = time.time()
 
